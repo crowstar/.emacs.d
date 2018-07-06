@@ -15,6 +15,9 @@
 ;; theme
 (load-theme 'solarized-dark t)
 
+;; auto-closing brackets
+(electric-pair-mode 1)
+
 ;;
 ;; ORG MODE SETTINGS
 ;;
@@ -24,8 +27,9 @@
 ;; use C-c a for agendas
 (global-set-key "\C-ca" 'org-agenda)
 
-;; auto close brackets etc.
-(electric-pair-mode 1)
+
+
+
 
 ;; emacs gui stuff
 (custom-set-variables
