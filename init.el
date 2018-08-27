@@ -42,8 +42,10 @@
   :ensure t
   :init
   (setq jedi:setup-keys t)
-  (add-hook 'python-mode 'jedi:setup)
-  (add-hook 'python-mode 'jedi:ac-setup))
+  (setq jedi:complete-on-dot t)
+  ;; problem here
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'jedi:ac-setup))
 
 ;; Magit settings
 (use-package magit
@@ -59,9 +61,6 @@
 
 ;; use C-c a for agendas
 (global-set-key "\C-ca" 'org-agenda)
-
-
-
 
 
 ;; emacs gui stuff
