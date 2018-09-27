@@ -37,15 +37,20 @@
 ;; auto-closing brackets
 (electric-pair-mode 1)
 
-;; Jedi.el for python autocomplete
-(use-package jedi
+;; Company. Auto-completion.
+(use-package company
   :ensure t
-  :init
-  (setq jedi:setup-keys t)
-  (setq jedi:complete-on-dot t)
-  ;; problem here
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (add-hook 'python-mode-hook 'jedi:ac-setup))
+  :bind (("C-<tab>" . company-complete))
+  :config
+  (global-company-mode))
+
+;; company-jedi for python autocomplete
+ (use-package company-jedi
+    :defer t
+    :init
+    (setq company-jedi-python-bin "python3")
+    :config
+    (add-to-list 'company-backends 'company-jedi))
 
 ;; Magit settings
 (use-package magit
