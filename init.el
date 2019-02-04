@@ -32,10 +32,47 @@
 (add-hook 'prog-mode-hook 'linum-mode)
 
 ;; theme
-(use-package solarized-theme)
+(use-package zenburn-theme
+  :ensure t
+  :config
+  (load-theme 'zenburn t))
+
+;; helm
+(use-package helm
+  :ensure t
+  :init
+  (setq helm-mode-fuzzy-match t)
+  (setq helm-completion-in-region-fuzzy-match t)
+  (setq helm-candidate-number-list 50))
+
+;; projectile
+(use-package projectile
+  :ensure t
+  :init
+  (setq projectile-completion-system 'helm)
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
 
 ;; auto-closing brackets
 (electric-pair-mode 1)
+
+;; use python3 for interpreter
+(setq python-shell-interpreter "~/Code/.virtualenvs/vector-2.7/bin/python")
+
+
+;; use exec from shell
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 
 ;; Company. Auto-completion.
 (use-package company
@@ -44,18 +81,26 @@
   :config
   (global-company-mode))
 
-;; company-jedi for python autocomplete
- (use-package company-jedi
-    :defer t
-    :init
-    (setq company-jedi-python-bin "python3")
-    :config
-    (add-to-list 'company-backends 'company-jedi))
+;; jedi for python autocomplete
+(use-package jedi
+  :ensure t)
+
+;; elpy for python IDE features
+(use-package elpy
+:ensure t
+:config
+(elpy-enable))
 
 ;; Magit settings
 (use-package magit
   :bind ("C-x g" . 'magit-status)
   :ensure t)
+
+;; yaml-mode
+(use-package yaml-mode
+  :ensure t
+  :mode ("\\.ya?ml\\'" . yaml-mode))
+
 
 ;;
 ;; ORG MODE SETTINGS
@@ -82,8 +127,9 @@
  '(custom-safe-themes
    (quote
     ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+ '(elpy-rpc-python-command "python3")
  '(inhibit-startup-screen t)
- '(package-selected-packages (quote (auto-package-update solarized-theme)))
+ '(package-selected-packages (quote (projectile auto-package-update solarized-theme)))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
