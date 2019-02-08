@@ -32,10 +32,10 @@
 (add-hook 'prog-mode-hook 'linum-mode)
 
 ;; theme
-(use-package zenburn-theme
+(use-package solarized-theme
   :ensure t
   :config
-  (load-theme 'zenburn t))
+  (load-theme 'solarized-dark t))
 
 ;; helm
 (use-package helm
@@ -43,15 +43,54 @@
   :init
   (setq helm-mode-fuzzy-match t)
   (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-candidate-number-list 50))
+  (setq helm-candidate-number-list 50)
+  :config
+  (helm-mode 1)
+  (require 'helm-config)
+  :bind
+  ("M-x" . helm-M-x)
+  ("C-x b" . helm-mini)
+  ("C-x C-f" . helm-find-files)
+  ("<tab>" . helm-execute-persistent-action)
+  ("C-z" . helm-select-action))
+
+(use-package helm-ag
+  :ensure t
+  :bind ("C-c a" . helm-ag))
+
+;; use helm for shortcuts in all modes
+(use-package helm-descbinds
+  :ensure t
+  :bind ("C-h b" . helm-descbinds)
+  :config
+  (helm-descbinds-mode 1))
+
+(use-package helm-projectile
+  :ensure t
+  :bind ("C-c h" . helm-projectile))
 
 ;; projectile
 (use-package projectile
   :ensure t
   :init
   (setq projectile-completion-system 'helm)
-  :bind-keymap
+  (projectile-mode 1)
+  :bind
   ("C-c p" . projectile-command-map))
+
+;; dired stuff
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar))
+
+(use-package dired
+  :config
+  ;; always copy and delete recursively
+  (setq dired-recursive-deletes 'always)
+  (setq dired-recursive-copies 'always)
+
+  (require 'dired-x))
 
 ;; Minimal UI
 (scroll-bar-mode -1)
@@ -62,17 +101,13 @@
 ;; auto-closing brackets
 (electric-pair-mode 1)
 
-;; use python3 for interpreter
-(setq python-shell-interpreter "~/Code/.virtualenvs/vector-2.7/bin/python")
-
-
 ;; use exec from shell
 (use-package exec-path-from-shell
   :if (memq window-system '(mac ns))
   :ensure t
   :config
+  (exec-path-from-shell-copy-env "WORKON_HOME")
   (exec-path-from-shell-initialize))
-
 
 ;; Company. Auto-completion.
 (use-package company
@@ -101,6 +136,10 @@
   :ensure t
   :mode ("\\.ya?ml\\'" . yaml-mode))
 
+;; dockerfile mode
+(use-package dockerfile-mode    
+  :ensure t
+  :mode ("Dockerfile\\'" . dockerfile-mode))
 
 ;;
 ;; ORG MODE SETTINGS
@@ -123,13 +162,18 @@
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
+ '(company-quickhelp-color-background "#4F4F4F")
+ '(company-quickhelp-color-foreground "#DCDCCC")
  '(custom-enabled-themes (quote (solarized-dark)))
  '(custom-safe-themes
    (quote
     ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
  '(elpy-rpc-python-command "python3")
  '(inhibit-startup-screen t)
- '(package-selected-packages (quote (projectile auto-package-update solarized-theme)))
+ '(package-selected-packages
+   (quote
+    (helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
+ '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(show-paren-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
