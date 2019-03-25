@@ -28,14 +28,44 @@
   (setq auto-package-update-hide-results t)
   (auto-package-update-maybe))
 
-;; line nos
+;; line and column nos
 (add-hook 'prog-mode-hook 'linum-mode)
+(setq column-number-mode t)
+
+
+;; Minimal UI
+(scroll-bar-mode -1)
+(tool-bar-mode   -1)
+(tooltip-mode    -1)
+(menu-bar-mode   -1)
+
+;; auto-closing brackets
+(electric-pair-mode 1)
+
+;; move backup files to a specific directory
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+  backup-by-copying t    ; Don't delink hardlinks
+  version-control t      ; Use version numbers on backups
+  delete-old-versions t  ; Automatically delete excess backups
+  kept-new-versions 20   ; how many of the newest versions to keep
+  kept-old-versions 5    ; and how many of the old
+  )
+
+;;
+;; PACKAGES
+;;
 
 ;; theme
 (use-package solarized-theme
   :ensure t
   :config
   (load-theme 'solarized-dark t))
+
+;; which-key
+(use-package which-key
+  :ensure t
+  :config
+  (which-key-mode 1))
 
 ;; helm
 (use-package helm
@@ -54,16 +84,16 @@
   ("<tab>" . helm-execute-persistent-action)
   ("C-z" . helm-select-action))
 
-(use-package helm-ag
-  :ensure t
-  :bind ("C-c a" . helm-ag))
-
 ;; use helm for shortcuts in all modes
 (use-package helm-descbinds
   :ensure t
   :bind ("C-h b" . helm-descbinds)
   :config
   (helm-descbinds-mode 1))
+
+;; uses tramp with helm find-file
+(use-package helm-tramp
+  :ensure t)
 
 (use-package helm-projectile
   :ensure t
@@ -92,22 +122,13 @@
 
   (require 'dired-x))
 
-;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-
-;; auto-closing brackets
-(electric-pair-mode 1)
-
 ;; use exec from shell
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
-  :ensure t
-  :config
-  (exec-path-from-shell-copy-env "WORKON_HOME")
-  (exec-path-from-shell-initialize))
+ :if (memq window-system '(mac ns))
+ :ensure t
+ :config
+ (exec-path-from-shell-copy-env "WORKON_HOME")
+ (exec-path-from-shell-initialize))
 
 ;; Company. Auto-completion.
 (use-package company
@@ -116,34 +137,82 @@
   :config
   (global-company-mode))
 
-;; jedi for python autocomplete
-(use-package jedi
-  :ensure t)
+;; anaconda
+(use-package anaconda-mode
+  :ensure t
+  :commands anaconda-mode
+  :config
+  (setq python-shell-interpreter "ipython")
+  (setq python-shell-interpreter-args "-i --simple-prompt")
+  :init
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook 'eldoc-mode))
 
-;; elpy for python IDE features
-(use-package elpy
-:ensure t
-:config
-(elpy-enable))
+;; company-anaconda
+(use-package company-anaconda
+  :after (anaconda-mode company)
+  :config (add-to-list 'company-backends 'company-anaconda))
+
+;; syntax checking
+(use-package flycheck
+  :ensure t
+  :config
+  (setq-default flycheck-flake8-maximum-line-length 100)
+  (add-hook 'prog-mode-hook 'flycheck-mode))
+
+;; change mode-line if syntax effor
+(use-package flycheck-color-mode-line
+  :ensure t
+  :config
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+
+;; auto formatter (autopep8)
+(use-package py-autopep8
+  :ensure t
+  :init
+  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+  (setq py-autopep8-options '("--max-line-length=100")))
+
+;; isort for auto import sorting
+(use-package py-isort
+  :ensure t
+  :init
+  (setq py-isort-options '("--lines=100"))
+  (add-hook 'before-save-hook 'py-isort-before-save))
 
 ;; Magit settings
 (use-package magit
-  :bind ("C-x g" . 'magit-status)
-  :ensure t)
+  :ensure t
+  :bind ("C-x g" . 'magit-status))
 
 ;; yaml-mode
 (use-package yaml-mode
   :ensure t
   :mode ("\\.ya?ml\\'" . yaml-mode))
 
+;; markdown mode
+(use-package markdown-mode
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+
 ;; dockerfile mode
-(use-package dockerfile-mode    
+(use-package dockerfile-mode
   :ensure t
   :mode ("Dockerfile\\'" . dockerfile-mode))
 
-;;
-;; ORG MODE SETTINGS
-;;
+;; docker tramp
+(use-package docker-tramp
+  :ensure t)
+
+;; docker
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
+
 ;; Enable Org mode
 (use-package org
   :ensure t)
@@ -168,11 +237,11 @@
  '(custom-safe-themes
    (quote
     ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
- '(elpy-rpc-python-command "python3")
+ '(docker-tramp-use-names t)
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-    (helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
+    (flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(show-paren-mode t))
 (custom-set-faces
@@ -181,5 +250,3 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
-
