@@ -146,12 +146,19 @@
   (setq python-shell-interpreter-args "-i --simple-prompt")
   :init
   (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'eldoc-mode))
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
 ;; company-anaconda
 (use-package company-anaconda
   :after (anaconda-mode company)
   :config (add-to-list 'company-backends 'company-anaconda))
+
+;; ensures virtual env is respected
+(use-package pyvenv
+  :ensure t
+  :commands pyvenv-mode
+  :init
+  (add-hook 'python-mode-hook 'pyvenv-mode))
 
 ;; syntax checking
 (use-package flycheck
