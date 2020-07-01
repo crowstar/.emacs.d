@@ -2,7 +2,7 @@
 (require 'package)
 
 ;; Add package sources when using package list
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 
@@ -62,6 +62,7 @@
   (load-theme 'solarized-dark t))
 
 (use-package undo-tree
+  :ensure t
   :init
   (undo-tree-mode))
 
@@ -75,9 +76,8 @@
 (use-package helm
   :ensure t
   :init
-  (setq helm-mode-fuzzy-match t)
-  (setq helm-completion-in-region-fuzzy-match t)
-  (setq helm-candidate-number-list 50)
+  (setq helm-completion-style 'emacs)
+  (setq completion-styles '(helm-flex))
   :config
   (helm-mode 1)
   (require 'helm-config)
@@ -126,6 +126,7 @@
   :commands (dired-sidebar-toggle-sidebar))
 
 (use-package dired
+  ;; :ensure t
   :config
   ;; always copy and delete recursively
   (setq dired-recursive-deletes 'always)
@@ -161,6 +162,7 @@
 
 ;; company-anaconda
 (use-package company-anaconda
+  :ensure t
   :after (anaconda-mode company)
   :config (add-to-list 'company-backends 'company-anaconda))
 
@@ -175,7 +177,6 @@
 (use-package flycheck
   :ensure t
   :config
-  (setq-default flycheck-flake8-maximum-line-length 100)
   (add-hook 'prog-mode-hook 'flycheck-mode))
 
 ;; change mode-line if syntax effor
@@ -183,20 +184,6 @@
   :ensure t
   :config
   (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-
-;; auto formatter (autopep8)
-(use-package py-autopep8
-  :ensure t
-  :init
-  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
-  (setq py-autopep8-options '("--max-line-length=100")))
-
-;; isort for auto import sorting
-(use-package py-isort
-  :ensure t
-  :init
-  (setq py-isort-options '("--lines=100"))
-  (add-hook 'before-save-hook 'py-isort-before-save))
 
 ;; Magit settings
 (use-package magit
@@ -235,11 +222,32 @@
 (use-package org
   :ensure t)
 
+;; slack markdown from org
+;; `(require 'ox)
+;; (use-package ox-slack
+;;   :ensure t)
+
+(use-package ox-gfm
+  :ensure t
+  :defer 3
+  :after org)
+
+;; black formatting
+(use-package blacken
+  :ensure t
+  :init
+  (add-hook 'python-mode-hook 'blacken-mode))
+
+;; isort for auto import sorting
+(use-package py-isort
+  :ensure t
+  :init
+  (setq py-isort-options '("--lines=88"))
+  (add-hook 'before-save-hook 'py-isort-before-save))
+
+
 ;; use C-c a for agendas
 (global-set-key "\C-ca" 'org-agenda)
-
-
-;; emacs gui stuff
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -260,6 +268,7 @@
  '(custom-safe-themes
    (quote
     ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+ '(debug-on-error t)
  '(docker-tramp-use-names t)
  '(fci-rule-color "#073642")
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
@@ -294,7 +303,7 @@
  '(org-export-backends (quote (ascii html icalendar latex md odt)))
  '(package-selected-packages
    (quote
-    (undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
+    (dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
