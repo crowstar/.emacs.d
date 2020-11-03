@@ -1,9 +1,11 @@
 ;; package setups
 (require 'package)
 
+(setq async-bytecomp-allowed-packages '(all))
+
 ;; Add package sources when using package list
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 
 ;; Load emacs packages and activate them
@@ -79,10 +81,10 @@
   (setq helm-completion-style 'emacs)
   (setq completion-styles '(helm-flex))
   :config
-  (helm-mode 1)
   (require 'helm-config)
+  (helm-mode 1)
   :bind
-  ("M-x" . helm-M-x)
+  ;;("M-x" . helm-M-x)
   ("C-x b" . helm-mini)
   ("C-x C-f" . helm-find-files)
   ("<tab>" . helm-execute-persistent-action)
@@ -259,52 +261,45 @@
    ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
- '(compilation-message-face (quote default))
+ '(compilation-message-face 'default)
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
  '(cua-overwrite-cursor-color "#b58900")
  '(cua-read-only-cursor-color "#859900")
- '(custom-enabled-themes (quote (solarized-dark)))
+ '(custom-enabled-themes '(solarized-dark))
  '(custom-safe-themes
-   (quote
-    ("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default)))
+   '("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))
  '(debug-on-error t)
  '(docker-tramp-use-names t)
  '(fci-rule-color "#073642")
- '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-changes-colors '("#d33682" "#6c71c4"))
  '(highlight-symbol-colors
    (--map
     (solarized-color-blend it "#002b36" 0.25)
-    (quote
-     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+    '("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2")))
  '(highlight-symbol-foreground-color "#93a1a1")
  '(highlight-tail-colors
-   (quote
-    (("#073642" . 0)
+   '(("#073642" . 0)
      ("#546E00" . 20)
      ("#00736F" . 30)
      ("#00629D" . 50)
      ("#7B6000" . 60)
      ("#8B2C02" . 70)
      ("#93115C" . 85)
-     ("#073642" . 100))))
+     ("#073642" . 100)))
  '(hl-bg-colors
-   (quote
-    ("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00")))
+   '("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00"))
  '(hl-fg-colors
-   (quote
-    ("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36")))
- '(hl-paren-colors (quote ("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900")))
+   '("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36"))
+ '(hl-paren-colors '("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900"))
  '(inhibit-startup-screen t)
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
-   (quote
-    ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
- '(org-export-backends (quote (ascii html icalendar latex md odt)))
+   '("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4"))
+ '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-selected-packages
-   (quote
-    (dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update)))
- '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+   '(pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
+ '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(show-paren-mode t)
@@ -314,8 +309,7 @@
  '(vc-annotate-background nil)
  '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
-   (quote
-    ((20 . "#dc322f")
+   '((20 . "#dc322f")
      (40 . "#c9485ddd1797")
      (60 . "#bf7e73b30bcb")
      (80 . "#b58900")
@@ -332,11 +326,10 @@
      (300 . "#288e98cbafe2")
      (320 . "#27c19460bb87")
      (340 . "#26f38ff5c72c")
-     (360 . "#268bd2"))))
+     (360 . "#268bd2")))
  '(vc-annotate-very-old-color nil)
  '(weechat-color-list
-   (quote
-    (unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83")))
+   '(unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83"))
  '(xterm-color-names
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
  '(xterm-color-names-bright
