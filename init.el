@@ -5,7 +5,7 @@
 
 ;; Add package sources when using package list
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 
 ;; Load emacs packages and activate them
@@ -77,14 +77,13 @@
 ;; helm
 (use-package helm
   :ensure t
-  :init
-  (setq helm-completion-style 'emacs)
-  (setq completion-styles '(helm-flex))
   :config
   (require 'helm-config)
   (helm-mode 1)
+  (setq helm-completion-style 'emacs)
+  (setq completion-styles '(flex))
   :bind
-  ;;("M-x" . helm-M-x)
+  ("M-x" . helm-M-x)
   ("C-x b" . helm-mini)
   ("C-x C-f" . helm-find-files)
   ("<tab>" . helm-execute-persistent-action)
