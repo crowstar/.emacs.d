@@ -13,6 +13,8 @@
 ;; Don't delete this line.
 (package-initialize)
 
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+
 ;; Check if use-package is installed
 ;; install if not
 (unless (package-installed-p 'use-package)
@@ -21,6 +23,13 @@
 
 (eval-when-compile
   (require 'use-package))
+
+;; Enable defer and ensure by default for use-package
+;; Keep auto-save/backup files separate from source code:  https://github.com/scalameta/metals/issues/1027
+(setq ;;use-package-always-defer t
+      use-package-always-ensure t
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 ;; Check if packages need updating
 (use-package auto-package-update
@@ -31,6 +40,7 @@
   (auto-package-update-maybe))
 
 ;; line and column nos
+;; (global-display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'linum-mode)
 (setq column-number-mode t)
 
@@ -43,6 +53,9 @@
 
 ;; auto-closing brackets
 (electric-pair-mode 1)
+
+;; js
+(setq js-indent-level 2)
 
 ;; move backup files to a specific directory
 (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
@@ -127,7 +140,7 @@
   :commands (dired-sidebar-toggle-sidebar))
 
 (use-package dired
-  ;; :ensure t
+  :ensure nil
   :config
   ;; always copy and delete recursively
   (setq dired-recursive-deletes 'always)
@@ -137,7 +150,7 @@
 
 ;; use exec from shell
 (use-package exec-path-from-shell
- :if (memq window-system '(mac ns))
+ :if (memq window-system '(mac ns x))
  :ensure t
  :config
  (exec-path-from-shell-copy-env "WORKON_HOME")
@@ -148,7 +161,8 @@
   :ensure t
   :bind (("C-<tab>" . company-complete))
   :config
-  (global-company-mode))
+  (global-company-mode)
+  (setq lsp-completion-provider :capf))
 
 ;; anaconda
 (use-package anaconda-mode
@@ -237,15 +251,79 @@
 (use-package blacken
   :ensure t
   :init
+  (setq blacken-line-length 120)
   (add-hook 'python-mode-hook 'blacken-mode))
 
 ;; isort for auto import sorting
 (use-package py-isort
   :ensure t
   :init
-  (setq py-isort-options '("--lines=88"))
+  (setq py-isort-options '("-l=120"))
   (add-hook 'before-save-hook 'py-isort-before-save))
 
+;;;
+;; SCALA
+;;;
+
+;; Enable scala-mode for highlighting, indentation and motion commands
+(use-package scala-mode
+  :interpreter
+    ("scala" . scala-mode))
+
+;; Enable sbt mode for executing sbt commands
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+   (setq sbt:program-options '("-Dsbt.supershell=false"))
+   )
+
+(use-package lsp-mode
+  ;; Optional - enable lsp-mode automatically in scala files
+  :hook  (scala-mode . lsp)
+         (lsp-mode . lsp-lens-mode)
+  :config
+  ;; Uncomment following section if you would like to tune lsp-mode performance according to
+  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
+  ;;       (setq gc-cons-threshold 100000000) ;; 100mb
+  ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  ;;       (setq lsp-idle-delay 0.500)
+  ;;       (setq lsp-log-io nil)
+  ;;       (setq lsp-completion-provider :capf)
+  (setq lsp-prefer-flymake nil))
+
+;; Add metals backend for lsp-mode
+(use-package lsp-metals
+  :ensure t)
+
+;; Enable nice rendering of documentation on hover
+;;   Warning: on some systems this package can reduce your emacs responsiveness significally.
+;;   (See: https://emacs-lsp.github.io/lsp-mode/page/performance/)
+;;   In that case you have to not only disable this but also remove from the packages since
+;;   lsp-mode can activate it automatically.
+(use-package lsp-ui)
+
+;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
+;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
+;;   to avoid odd behavior with snippets and indentation
+(use-package yasnippet)
+
+;; Use the Debug Adapter Protocol for running tests and debugging
+(use-package posframe
+  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
+  )
+
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode)
+  )
 
 ;; use C-c a for agendas
 (global-set-key "\C-ca" 'org-agenda)
@@ -261,13 +339,14 @@
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(compilation-message-face 'default)
+ '(create-lockfiles nil)
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#839496")
  '(cua-overwrite-cursor-color "#b58900")
  '(cua-read-only-cursor-color "#859900")
  '(custom-enabled-themes '(solarized-dark))
  '(custom-safe-themes
-   '("8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))
+   '("2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))
  '(debug-on-error t)
  '(docker-tramp-use-names t)
  '(fci-rule-color "#073642")
@@ -291,13 +370,15 @@
  '(hl-fg-colors
    '("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36"))
  '(hl-paren-colors '("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900"))
+ '(indent-tabs-mode nil)
  '(inhibit-startup-screen t)
+ '(js-indent-level 2 t)
  '(magit-diff-use-overlays nil)
  '(nrepl-message-colors
    '("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4"))
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-selected-packages
-   '(pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
+   '(helm-rg ag pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
