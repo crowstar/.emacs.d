@@ -5,7 +5,7 @@
 
 ;; Add package sources when using package list
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 
 ;; Load emacs packages and activate them
@@ -81,6 +81,25 @@
   :init
   (undo-tree-mode))
 
+;; treesitter - highlighting
+(use-package tree-sitter
+  :ensure t
+  :demand t
+  :config (global-tree-sitter-mode)
+  :hook (tree-sitter-after-on . tree-sitter-hl-mode)
+)
+
+(use-package tree-sitter-langs
+  :ensure t
+  :demand t
+  :after tree-sitter)
+
+
+;; vterm
+(use-package vterm
+  :ensure t)
+
+
 ;; which-key
 (use-package which-key
   :ensure t
@@ -153,7 +172,6 @@
  :if (memq window-system '(mac ns x))
  :ensure t
  :config
- (exec-path-from-shell-copy-env "WORKON_HOME")
  (exec-path-from-shell-initialize))
 
 ;; Company. Auto-completion.
@@ -165,28 +183,29 @@
   (setq lsp-completion-provider :capf))
 
 ;; anaconda
-(use-package anaconda-mode
-  :ensure t
-  :commands anaconda-mode
-  :config
-  (setq python-shell-interpreter "ipython")
-  (setq python-shell-interpreter-args "-i --simple-prompt")
-  :init
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+;; (use-package anaconda-mode
+;;   :ensure t
+;;   :commands anaconda-mode
+;;   :config
+;;   (setq python-shell-interpreter "ipython")
+;;   (setq python-shell-interpreter-args "-i --simple-prompt")
+;;   :init
+;;   (add-hook 'python-mode-hook 'anaconda-mode)
+;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 
-;; company-anaconda
-(use-package company-anaconda
-  :ensure t
-  :after (anaconda-mode company)
-  :config (add-to-list 'company-backends 'company-anaconda))
+;; ;; company-anaconda
+;; (use-package company-anaconda
+;;   :ensure t
+;;   :after (anaconda-mode company)
+;;   :config (add-to-list 'company-backends 'company-anaconda))
 
 ;; ensures virtual env is respected
 (use-package pyvenv
   :ensure t
   :commands pyvenv-mode
   :init
-  (add-hook 'python-mode-hook 'pyvenv-mode))
+  (add-hook 'python-mode-hook 'pyvenv-mode)
+  (setenv "WORKON_HOME" "~/.pyenv/versions"))
 
 ;; syntax checking
 (use-package flycheck
@@ -284,30 +303,18 @@
    (setq sbt:program-options '("-Dsbt.supershell=false"))
    )
 
-(use-package lsp-mode
-  ;; Optional - enable lsp-mode automatically in scala files
-  :hook  (scala-mode . lsp)
-         (lsp-mode . lsp-lens-mode)
-  :config
-  ;; Uncomment following section if you would like to tune lsp-mode performance according to
-  ;; https://emacs-lsp.github.io/lsp-mode/page/performance/
-  ;;       (setq gc-cons-threshold 100000000) ;; 100mb
-  ;;       (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  ;;       (setq lsp-idle-delay 0.500)
-  ;;       (setq lsp-log-io nil)
-  ;;       (setq lsp-completion-provider :capf)
-  (setq lsp-prefer-flymake nil))
+;; lsp support
+(use-package eglot
+  :ensure t
+  :commands (eglot eglot-ensure)
+  :hook (python-mode-hook . eglot-ensure))
 
-;; Add metals backend for lsp-mode
-(use-package lsp-metals
-  :ensure t)
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp))))  ; or lsp-deferred
 
-;; Enable nice rendering of documentation on hover
-;;   Warning: on some systems this package can reduce your emacs responsiveness significally.
-;;   (See: https://emacs-lsp.github.io/lsp-mode/page/performance/)
-;;   In that case you have to not only disable this but also remove from the packages since
-;;   lsp-mode can activate it automatically.
-(use-package lsp-ui)
 
 ;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
 ;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
@@ -335,7 +342,7 @@
  '(ansi-color-faces-vector
    [default default default italic underline success warning error])
  '(ansi-color-names-vector
-   ["#2d3743" "#ff4242" "#74af68" "#dbdb95" "#34cae2" "#008b8b" "#00ede1" "#e1e1e0"])
+   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
  '(company-quickhelp-color-background "#4F4F4F")
  '(company-quickhelp-color-foreground "#DCDCCC")
  '(compilation-message-face 'default)
@@ -378,7 +385,7 @@
    '("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4"))
  '(org-export-backends '(ascii html icalendar latex md odt))
  '(package-selected-packages
-   '(helm-rg ag pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
+   '(vterm tree-sitter-langs tree-sitter lsp-pyright helm-rg ag pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
  '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
