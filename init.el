@@ -1,429 +1,194 @@
-;; package setups
-(require 'package)
+;;; init.el -*- lexical-binding: t; -*-
 
-(setq async-bytecomp-allowed-packages '(all))
+;; This file controls what Doom modules are enabled and what order they load
+;; in. Remember to run 'doom sync' after modifying it!
 
-;; Add package sources when using package list
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
-(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
+;; NOTE Press 'SPC h d h' (or 'C-h d h' for non-vim users) to access Doom's
+;;      documentation. There you'll find a link to Doom's Module Index where all
+;;      of our modules are listed, including what flags they support.
 
-;; Load emacs packages and activate them
-;; This must come before configurations of installed packages.
-;; Don't delete this line.
-(package-initialize)
-
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
-
-;; Check if use-package is installed
-;; install if not
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
-
-;; Enable defer and ensure by default for use-package
-;; Keep auto-save/backup files separate from source code:  https://github.com/scalameta/metals/issues/1027
-(setq ;;use-package-always-defer t
-      use-package-always-ensure t
-      backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
-
-;; Check if packages need updating
-(use-package auto-package-update
-  :ensure t
-  :config
-  (setq auto-package-update-delete-old-versions t)
-  (setq auto-package-update-hide-results t)
-  (auto-package-update-maybe))
-
-;; line and column nos
-;; (global-display-line-numbers-mode)
-(add-hook 'prog-mode-hook 'linum-mode)
-(setq column-number-mode t)
-
-
-;; Minimal UI
-(scroll-bar-mode -1)
-(tool-bar-mode   -1)
-(tooltip-mode    -1)
-(menu-bar-mode   -1)
-
-;; auto-closing brackets
-(electric-pair-mode 1)
-
-;; js
-(setq js-indent-level 2)
-
-;; move backup files to a specific directory
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
-  backup-by-copying t    ; Don't delink hardlinks
-  version-control t      ; Use version numbers on backups
-  delete-old-versions t  ; Automatically delete excess backups
-  kept-new-versions 20   ; how many of the newest versions to keep
-  kept-old-versions 5    ; and how many of the old
-  )
-
+;; NOTE Move your cursor over a module's name (or its flags) and press 'K' (or
+;;      'C-c c k' for non-vim users) to view its documentation. This works on
+;;      flags as well (those symbols that start with a plus).
 ;;
-;; PACKAGES
-;;
+;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
+;;      directory (for easy access to its source code).
 
-;; theme
-(use-package solarized-theme
-  :ensure t
-  :config
-  (load-theme 'solarized-dark t))
+(doom! :input
+       ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
+       ;;chinese
+       ;;japanese
+       ;;layout            ; auie,ctsrnm is the superior home row
 
-(use-package undo-tree
-  :ensure t
-  :init
-  (undo-tree-mode))
+       :completion
+       company           ; the ultimate code completion backend
+       ;;helm              ; the *other* search engine for love and life
+       ;;ido               ; the other *other* search engine...
+       ;;ivy               ; a search engine for love and life
+       vertico           ; the search engine of the future
 
-;; treesitter - highlighting
-(use-package tree-sitter
-  :ensure t
-  :demand t
-  :config (global-tree-sitter-mode)
-  :hook (tree-sitter-after-on . tree-sitter-hl-mode)
-)
+       :ui
+       ;;deft              ; notational velocity for Emacs
+       doom              ; what makes DOOM look the way it does
+       doom-dashboard    ; a nifty splash screen for Emacs
+       ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
+       ;;(emoji +unicode)  ; 🙂
+       hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
+       ;;hydra
+       ;;indent-guides     ; highlighted indent columns
+       ;;ligatures         ; ligatures and symbols to make your code pretty again
+       ;;minimap           ; show a map of the code on the side
+       modeline          ; snazzy, Atom-inspired modeline, plus API
+       ;;nav-flash         ; blink cursor line after big motions
+       ;;neotree           ; a project drawer, like NERDTree for vim
+       ophints           ; highlight the region an operation acts on
+       (popup +defaults)   ; tame sudden yet inevitable temporary windows
+       ;;tabs              ; a tab bar for Emacs
+       treemacs          ; a project drawer, like neotree but cooler
+       ;;unicode           ; extended unicode support for various languages
+       (vc-gutter +pretty) ; vcs diff in the fringe
+       vi-tilde-fringe   ; fringe tildes to mark beyond EOB
+       ;;window-select     ; visually switch windows
+       workspaces        ; tab emulation, persistence & separate workspaces
+       ;;zen               ; distraction-free coding or writing
 
-(use-package tree-sitter-langs
-  :ensure t
-  :demand t
-  :after tree-sitter)
+       :editor
+       ;;(evil +everywhere); come to the dark side, we have cookies
+       file-templates    ; auto-snippets for empty files
+       fold              ; (nigh) universal code folding
+       (format +onsave)  ; automated prettiness
+       ;;god               ; run Emacs commands without modifier keys
+       ;;lispy             ; vim for lisp, for people who don't like vim
+       ;;multiple-cursors  ; editing in many places at once
+       ;;objed             ; text object editing for the innocent
+       ;;parinfer          ; turn lisp into python, sort of
+       ;;rotate-text       ; cycle region at point between text candidates
+       snippets          ; my elves. They type so I don't have to
+       word-wrap         ; soft wrapping with language-aware indent
 
+       :emacs
+       dired             ; making dired pretty [functional]
+       electric          ; smarter, keyword-based electric-indent
+       ibuffer         ; interactive buffer management
+       undo              ; persistent, smarter undo for your inevitable mistakes
+       vc                ; version-control and Emacs, sitting in a tree
 
-;; vterm
-(use-package vterm
-  :ensure t)
+       :term
+       ;;eshell            ; the elisp shell that works everywhere
+       ;;shell             ; simple shell REPL for Emacs
+       ;;term              ; basic terminal emulator for Emacs
+       vterm             ; the best terminal emulation in Emacs
 
+       :checkers
+       syntax              ; tasing you for every semicolon you forget
+       ;;(spell +flyspell) ; tasing you for misspelling mispelling
+       ;;grammar           ; tasing grammar mistake every you make
 
-;; which-key
-(use-package which-key
-  :ensure t
-  :config
-  (which-key-mode 1))
+       :tools
+       ;;ansible
+       ;;biblio            ; Writes a PhD for you (citation needed)
+       ;;debugger          ; FIXME stepping through code, to help you add bugs
+       ;;direnv
+       (docker +lsp)
+       ;;editorconfig      ; let someone else argue about tabs vs spaces
+       ;;ein               ; tame Jupyter notebooks with emacs
+       (eval +overlay)     ; run code, run (also, repls)
+       ;;gist              ; interacting with github gists
+       lookup              ; navigate your code and its documentation
+       lsp               ; M-x vscode
+       magit             ; a git porcelain for Emacs
+       make              ; run make tasks from Emacs
+       ;;pass              ; password manager for nerds
+       ;;pdf               ; pdf enhancements
+       ;;prodigy           ; FIXME managing external services & code builders
+       ;;rgb               ; creating color strings
+       ;;taskrunner        ; taskrunner for all your projects
+       ;;terraform         ; infrastructure as code
+       ;;tmux              ; an API for interacting with tmux
+       tree-sitter       ; syntax and parsing, sitting in a tree...
+       ;;upload            ; map local to remote projects via ssh/ftp
 
-;; helm
-(use-package helm
-  :ensure t
-  :config
-  (require 'helm-config)
-  (helm-mode 1)
-  (setq helm-completion-style 'emacs)
-  (setq completion-styles '(flex))
-  :bind
-  ("M-x" . helm-M-x)
-  ("C-x b" . helm-mini)
-  ("C-x C-f" . helm-find-files)
-  ("<tab>" . helm-execute-persistent-action)
-  ("C-z" . helm-select-action))
+       :os
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       ;;tty               ; improve the terminal Emacs experience
 
-;; use helm for shortcuts in all modes
-(use-package helm-descbinds
-  :ensure t
-  :bind ("C-h b" . helm-descbinds)
-  :config
-  (helm-descbinds-mode 1))
+       :lang
+       ;;agda              ; types of types of types of types...
+       ;;beancount         ; mind the GAAP
+       (cc +lsp)         ; C > C++ == 1
+       ;;clojure           ; java with a lisp
+       ;;common-lisp       ; if you've seen one lisp, you've seen them all
+       ;;coq               ; proofs-as-programs
+       ;;crystal           ; ruby at the speed of c
+       ;;csharp            ; unity, .NET, and mono shenanigans
+       ;;data              ; config/data formats
+       ;;(dart +flutter)   ; paint ui and not much else
+       ;;dhall
+       ;;elixir            ; erlang done right
+       ;;elm               ; care for a cup of TEA?
+       emacs-lisp        ; drown in parentheses
+       ;;erlang            ; an elegant language for a more civilized age
+       ;;ess               ; emacs speaks statistics
+       ;;factor
+       ;;faust             ; dsp, but you get to keep your soul
+       ;;fortran           ; in FORTRAN, GOD is REAL (unless declared INTEGER)
+       ;;fsharp            ; ML stands for Microsoft's Language
+       ;;fstar             ; (dependent) types and (monadic) effects and Z3
+       ;;gdscript          ; the language you waited for
+       ;;(go +lsp)         ; the hipster dialect
+       ;;(graphql +lsp)    ; Give queries a REST
+       ;;(haskell +lsp)    ; a language that's lazier than I am
+       ;;hy                ; readability of scheme w/ speed of python
+       ;;idris             ; a language you can depend on
+       json              ; At least it ain't XML
+       ;;(java +lsp)       ; the poster child for carpal tunnel syndrome
+       (javascript +lsp +tree-sitter)        ; all(hope(abandon(ye(who(enter(here))))))
+       ;;julia             ; a better, faster MATLAB
+       ;;kotlin            ; a better, slicker Java(Script)
+       ;;latex             ; writing papers in Emacs has never been so fun
+       ;;lean              ; for folks with too much to prove
+       ;;ledger            ; be audit you can be
+       ;;lua               ; one-based indices? one-based indices
+       markdown          ; writing docs for people to ignore
+       ;;nim               ; python + lisp at the speed of c
+       ;;nix               ; I hereby declare "nix geht mehr!"
+       ;;ocaml             ; an objective camel
+       org               ; organize your plain life in plain text
+       ;;php               ; perl's insecure younger brother
+       ;;plantuml          ; diagrams for confusing people more
+       ;;purescript        ; javascript, but functional
+       (python +lsp +pyenv +pyright +tree-sitter)            ; beautiful is better than ugly
+       ;;qt                ; the 'cutest' gui framework ever
+       ;;racket            ; a DSL for DSLs
+       ;;raku              ; the artist formerly known as perl6
+       ;;rest              ; Emacs as a REST client
+       ;;rst               ; ReST in peace
+       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       (rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
+       ;;scala             ; java, but good
+       ;;(scheme +guile)   ; a fully conniving family of lisps
+       sh                ; she sells {ba,z,fi}sh shells on the C xor
+       ;;sml
+       ;;solidity          ; do you need a blockchain? No.
+       ;;swift             ; who asked for emoji variables?
+       ;;terra             ; Earth and Moon in alignment for performance.
+       ;;web               ; the tubes
+       (yaml +lsp)              ; JSON, but readable
+       ;;zig               ; C, but simpler
 
-;; uses tramp with helm find-file
-(use-package helm-tramp
-  :ensure t)
+       :email
+       ;;(mu4e +org +gmail)
+       ;;notmuch
+       ;;(wanderlust +gmail)
 
-(use-package helm-projectile
-  :ensure t
-  :bind ("C-c h" . helm-projectile))
+       :app
+       ;;calendar
+       ;;emms
+       ;;everywhere        ; *leave* Emacs!? You must be joking
+       ;;irc               ; how neckbeards socialize
+       ;;(rss +org)        ; emacs as an RSS reader
+       ;;twitter           ; twitter client https://twitter.com/vnought
 
-(use-package helm-xref
-  :ensure t
-  :after helm
-  :commands helm-xref
-  :config
-  (setq xref-show-xrefs-function 'helm-xref-show-xrefs))
-
-;; projectile
-(use-package projectile
-  :ensure t
-  :init
-  (setq projectile-completion-system 'helm)
-  (projectile-mode 1)
-  :bind
-  ("C-c p" . projectile-command-map))
-
-;; dired stuff
-(use-package dired-sidebar
-  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
-  :commands (dired-sidebar-toggle-sidebar))
-
-(use-package dired
-  :ensure nil
-  :config
-  ;; always copy and delete recursively
-  (setq dired-recursive-deletes 'always)
-  (setq dired-recursive-copies 'always)
-
-  (require 'dired-x))
-
-;; use exec from shell
-(use-package exec-path-from-shell
- :if (memq window-system '(mac ns x))
- :ensure t
- :config
- (exec-path-from-shell-initialize))
-
-;; Company. Auto-completion.
-(use-package company
-  :ensure t
-  :bind (("C-<tab>" . company-complete))
-  :config
-  (global-company-mode)
-  (setq lsp-completion-provider :capf))
-
-;; anaconda
-;; (use-package anaconda-mode
-;;   :ensure t
-;;   :commands anaconda-mode
-;;   :config
-;;   (setq python-shell-interpreter "ipython")
-;;   (setq python-shell-interpreter-args "-i --simple-prompt")
-;;   :init
-;;   (add-hook 'python-mode-hook 'anaconda-mode)
-;;   (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
-
-;; ;; company-anaconda
-;; (use-package company-anaconda
-;;   :ensure t
-;;   :after (anaconda-mode company)
-;;   :config (add-to-list 'company-backends 'company-anaconda))
-
-;; ensures virtual env is respected
-(use-package pyvenv
-  :ensure t
-  :commands pyvenv-mode
-  :init
-  (add-hook 'python-mode-hook 'pyvenv-mode)
-  (setenv "WORKON_HOME" "~/.pyenv/versions"))
-
-;; syntax checking
-(use-package flycheck
-  :ensure t
-  :config
-  (add-hook 'prog-mode-hook 'flycheck-mode))
-
-;; change mode-line if syntax effor
-(use-package flycheck-color-mode-line
-  :ensure t
-  :config
-  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-
-;; Magit settings
-(use-package magit
-  :ensure t
-  :bind ("C-x g" . 'magit-status))
-
-;; yaml-mode
-(use-package yaml-mode
-  :ensure t
-  :mode ("\\.ya?ml\\'" . yaml-mode))
-
-;; markdown mode
-(use-package markdown-mode
-  :ensure t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
-
-;; dockerfile mode
-(use-package dockerfile-mode
-  :ensure t
-  :mode ("Dockerfile\\'" . dockerfile-mode))
-
-;; docker tramp
-(use-package docker-tramp
-  :ensure t)
-
-;; docker
-(use-package docker
-  :ensure t
-  :bind ("C-c d" . docker))
-
-;; Enable Org mode
-(use-package org
-  :ensure t)
-
-;; slack markdown from org
-;; `(require 'ox)
-;; (use-package ox-slack
-;;   :ensure t)
-
-(use-package ox-gfm
-  :ensure t
-  :defer 3
-  :after org)
-
-;; black formatting
-(use-package blacken
-  :ensure t
-  :init
-  (setq blacken-line-length 120)
-  (add-hook 'python-mode-hook 'blacken-mode))
-
-;; isort for auto import sorting
-(use-package py-isort
-  :ensure t
-  :init
-  (setq py-isort-options '("-l=120"))
-  (add-hook 'before-save-hook 'py-isort-before-save))
-
-;;;
-;; SCALA
-;;;
-
-;; Enable scala-mode for highlighting, indentation and motion commands
-(use-package scala-mode
-  :interpreter
-    ("scala" . scala-mode))
-
-;; Enable sbt mode for executing sbt commands
-(use-package sbt-mode
-  :commands sbt-start sbt-command
-  :config
-  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
-  ;; allows using SPACE when in the minibuffer
-  (substitute-key-definition
-   'minibuffer-complete-word
-   'self-insert-command
-   minibuffer-local-completion-map)
-   ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
-   (setq sbt:program-options '("-Dsbt.supershell=false"))
-   )
-
-;; lsp support
-(use-package eglot
-  :ensure t
-  :commands (eglot eglot-ensure)
-  :hook (python-mode-hook . eglot-ensure))
-
-(use-package lsp-pyright
-  :ensure t
-  :hook (python-mode . (lambda ()
-                          (require 'lsp-pyright)
-                          (lsp))))  ; or lsp-deferred
-
-
-;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
-;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
-;;   to avoid odd behavior with snippets and indentation
-(use-package yasnippet)
-
-;; Use the Debug Adapter Protocol for running tests and debugging
-(use-package posframe
-  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
-  )
-
-(use-package dap-mode
-  :hook
-  (lsp-mode . dap-mode)
-  (lsp-mode . dap-ui-mode)
-  )
-
-;; use C-c a for agendas
-(global-set-key "\C-ca" 'org-agenda)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(ansi-color-faces-vector
-   [default default default italic underline success warning error])
- '(ansi-color-names-vector
-   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
- '(company-quickhelp-color-background "#4F4F4F")
- '(company-quickhelp-color-foreground "#DCDCCC")
- '(compilation-message-face 'default)
- '(create-lockfiles nil)
- '(cua-global-mark-cursor-color "#2aa198")
- '(cua-normal-cursor-color "#839496")
- '(cua-overwrite-cursor-color "#b58900")
- '(cua-read-only-cursor-color "#859900")
- '(custom-enabled-themes '(solarized-dark))
- '(custom-safe-themes
-   '("2809bcb77ad21312897b541134981282dc455ccd7c14d74cc333b6e549b824f3" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" default))
- '(debug-on-error t)
- '(docker-tramp-use-names t)
- '(fci-rule-color "#073642")
- '(highlight-changes-colors '("#d33682" "#6c71c4"))
- '(highlight-symbol-colors
-   (--map
-    (solarized-color-blend it "#002b36" 0.25)
-    '("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2")))
- '(highlight-symbol-foreground-color "#93a1a1")
- '(highlight-tail-colors
-   '(("#073642" . 0)
-     ("#546E00" . 20)
-     ("#00736F" . 30)
-     ("#00629D" . 50)
-     ("#7B6000" . 60)
-     ("#8B2C02" . 70)
-     ("#93115C" . 85)
-     ("#073642" . 100)))
- '(hl-bg-colors
-   '("#7B6000" "#8B2C02" "#990A1B" "#93115C" "#3F4D91" "#00629D" "#00736F" "#546E00"))
- '(hl-fg-colors
-   '("#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36" "#002b36"))
- '(hl-paren-colors '("#2aa198" "#b58900" "#268bd2" "#6c71c4" "#859900"))
- '(indent-tabs-mode nil)
- '(inhibit-startup-screen t)
- '(js-indent-level 2 t)
- '(magit-diff-use-overlays nil)
- '(nrepl-message-colors
-   '("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4"))
- '(org-export-backends '(ascii html icalendar latex md odt))
- '(package-selected-packages
-   '(vterm tree-sitter-langs tree-sitter lsp-pyright helm-rg ag pyvenv company-anaconda anaconda-mode company exec-path-from-shell helm-xref helm-tramp helm-descbinds helm solarized-theme dockerfile-mode yaml-mode magit ox-gfm blacken dired ox-slack undo-tree flycheck-color-mode-line py-yapf flycheck company-lsp lsp-ui lsp-mode docker docker-tramp which-key markdown-mode lv py-isort helm-projectile helm-ag dired-sidebar solarized-dark projectile auto-package-update))
- '(pdf-view-midnight-colors '("#DCDCCC" . "#383838"))
- '(pos-tip-background-color "#073642")
- '(pos-tip-foreground-color "#93a1a1")
- '(show-paren-mode t)
- '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
- '(term-default-bg-color "#002b36")
- '(term-default-fg-color "#839496")
- '(vc-annotate-background nil)
- '(vc-annotate-background-mode nil)
- '(vc-annotate-color-map
-   '((20 . "#dc322f")
-     (40 . "#c9485ddd1797")
-     (60 . "#bf7e73b30bcb")
-     (80 . "#b58900")
-     (100 . "#a5a58ee30000")
-     (120 . "#9d9d91910000")
-     (140 . "#9595943e0000")
-     (160 . "#8d8d96eb0000")
-     (180 . "#859900")
-     (200 . "#67119c4632dd")
-     (220 . "#57d79d9d4c4c")
-     (240 . "#489d9ef365ba")
-     (260 . "#3963a04a7f29")
-     (280 . "#2aa198")
-     (300 . "#288e98cbafe2")
-     (320 . "#27c19460bb87")
-     (340 . "#26f38ff5c72c")
-     (360 . "#268bd2")))
- '(vc-annotate-very-old-color nil)
- '(weechat-color-list
-   '(unspecified "#002b36" "#073642" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#839496" "#657b83"))
- '(xterm-color-names
-   ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
- '(xterm-color-names-bright
-   ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+       :config
+       ;;literate
+       (default +bindings +smartparens))
