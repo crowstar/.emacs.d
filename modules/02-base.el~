@@ -1,0 +1,4 @@
+;;; base.el -*- lexical-binding: t -*-
+;;
+;; customises emacs variables and base emacs functionality/defaults
+;;

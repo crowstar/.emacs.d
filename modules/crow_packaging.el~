@@ -1,0 +1,6 @@
+;;; crow_packaging.el -*- lexical-binding: t -*-
+;;
+;; sets up the package manager, should be run early.
+;;
+;; fow now, the package manager will be elpaca
+;;
