@@ -16,7 +16,7 @@
 (setq byte-compile-warnings '(not obsolete))
 (setq warning-suppress-log-types '((comp) (bytecomp)))
 (setq native-comp-async-report-warnings-errors 'silent)
-(add-hook 'window-setup-hook #'toggle-frame-maximized)
+;(add-hook 'window-setup-hook #'toggle-frame-maximized)
 
 ;; disable some UI
 (push '(tool-bar-lines . 0) default-frame-alist)

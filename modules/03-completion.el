@@ -12,7 +12,7 @@
 
 ;; non-movec completion stuff
 (use-package emacs
-  :elpaca nil
+  :ensure nil
   :config
   ;; Add tab support for code completion.
   (setopt tab-always-indent 'complete)
@@ -47,7 +47,7 @@
 
 ;; Persist history for vertico
 (use-package savehist
-  :elpaca nil ; this is built-in
+  :ensure nil ; this is built-in
   :init
   (savehist-mode))
 
@@ -73,11 +73,6 @@
 
   :init
   (global-corfu-mode))
-
-(use-package embark-consult
-  :elpaca nil ; included with embark
-  :hook
-  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;; Consult
 ;; Default config from github.com/minad/consult
@@ -180,7 +175,11 @@
   ;; Optionally configure the narrowing key.
   ;; Both < and C-+ work reasonably well.
   (setq consult-narrow-key "<") ;; "C-+"
-)
+  )
+
+(use-package embark-consult
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 
 ;; export module

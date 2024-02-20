@@ -7,12 +7,16 @@
 (require '01-packaging)
 (require '02-base)
 (require '03-completion)
-(require '04-binds)
+(require '04-navigation)
 
 ;; programming modes
 (require 'lang/base)
+(require 'lang/_python)
 
+;; goes last to ensure the hook is executed first
+(require '99-direnv)
 ;; TODO
-;; lsp
+;; lsp (set eldoc-idle-delay lower, map bind for eldoc)
 ;; treesitter
 ;; langs (python, web (js/ts/html/css), java, etc)
+;; iedit, 

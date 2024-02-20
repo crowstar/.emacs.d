@@ -56,7 +56,7 @@
   ;; Enable :elpaca use-package keyword.
   (elpaca-use-package-mode)
   ;; Assume :elpaca t unless otherwise specified.
-  (setopt elpaca-use-package-by-default t))
+  (setopt use-package-always-ensure t))
 
 ;; Block until current queue processed.
 (elpaca-wait)

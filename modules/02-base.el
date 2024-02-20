@@ -8,7 +8,7 @@
 
 ;; Reconfigures annoying defaults
 (use-package emacs
-  :elpaca nil
+  :ensure nil
   :config
   ;; we don't need backup/lockfiles
   (setopt make-backup-files nil)
@@ -33,7 +33,7 @@
 
 ;; General settings
 (use-package emacs
-  :elpaca nil
+  :ensure nil
   :config
   ;; sentence defaults
   (setopt word-wrap t)
@@ -60,7 +60,7 @@
 
 ;; Programming mode visuals
 (use-package emacs
-  :elpaca nil
+  :ensure nil
   :hook (prog-mode . display-line-numbers-mode)
   :config
   (setopt display-line-numbers-width 2)
@@ -70,6 +70,12 @@
 (use-package modus-themes
   :config
   (load-theme 'modus-vivendi-tinted t)) ; t should make it trusted
+
+;; Set path
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 
 ;; export module
