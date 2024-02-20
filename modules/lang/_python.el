@@ -1,6 +1,6 @@
 ;;; lang/_python.el -*- lexical-binding: t -*-
 ;;
-;; Python setup for treesitter/lsp/venvs
+;; Python setup for treesitter/lsp
 ;; venv support provided by direnv, not emacs itself
 
 ;; LSP
