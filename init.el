@@ -11,12 +11,11 @@
 
 ;; programming modes
 (require 'lang/base)
-(require 'lang/_python)
 
 ;; goes last to ensure the hook is executed first
 (require '99-direnv)
 ;; TODO
 ;; lsp (set eldoc-idle-delay lower, map bind for eglot)
-;; treesitter
 ;; langs (python, js/jsx, web (html/css/jsx), java, etc)
 ;; iedit, apheleia
+;; use-package imenu

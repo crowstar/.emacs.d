@@ -19,10 +19,6 @@
   ;; recommended for vertico
   (setopt enable-recursive-minibuffers t))
 
-(use-package which-key
-  :config
-  (which-key-mode))
-
 ;;
 ;; MOVEC
 ;;
@@ -57,8 +53,9 @@
   (("C-." . emabrk-act)
    ("C-;" . embark-dwim)
    ("C-h B". embark-bindings))
-
   :config
+  ;; use embark's command help menu
+  (setq prefix-help-command #'embark-prefix-help-command)
   ;; Hide the mode line of the Embark live/completions buffers
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -70,7 +67,6 @@
   :custom
   (corfu-cycle t)
   (corfu-auto t)
-
   :init
   (global-corfu-mode))
 

@@ -53,18 +53,7 @@
 
   ;; cursor
   (blink-cursor-mode -1)
-  (pixel-scroll-precision-mode)
-
-  ;; tab bar
-  (setopt tab-bar-show 1))
-
-;; Programming mode visuals
-(use-package emacs
-  :ensure nil
-  :hook (prog-mode . display-line-numbers-mode)
-  :config
-  (setopt display-line-numbers-width 2)
-  (setopt display-line-numbers-widen t)) ; widen when necessary
+  (pixel-scroll-precision-mode))
 
 ;; Theme
 (use-package modus-themes

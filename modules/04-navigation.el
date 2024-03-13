@@ -8,7 +8,6 @@
   :bind
   ("C-'" . 'avy-goto-char-timer))
 
-
 ;; Expand-region
 ;; move to Combobulate one day?
 (use-package expand-region
