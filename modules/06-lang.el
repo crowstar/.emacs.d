@@ -14,7 +14,6 @@
   (display-line-numbers-width 2)
   (display-line-numbers-widen t))
 
-
 ;; Matching parens
 (use-package electric-pair
   :ensure nil
@@ -28,7 +27,9 @@
   (fset #'jsonrpc--log-event #'ignore)
   ;; LSP Enabled Langs
   :hook
-  ((python-ts-mode . eglot-ensure)))
+  ((python-ts-mode . eglot-ensure)
+   (js-ts-mode . eglot-ensure)
+   (java-ts-mode . eglot-ensure)))
 
 ;; Tree-sitter helper
 ;; Automatically installs and uses a ts major mode when available
