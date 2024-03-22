@@ -8,14 +8,11 @@
 (require '02-base)
 (require '03-completion)
 (require '04-navigation)
-
-;; programming modes
-(require 'lang/base)
+(require '05-lang)
 
 ;; goes last to ensure the hook is executed first
 (require '99-direnv)
 ;; TODO
-;; lsp (set eldoc-idle-delay lower, map bind for eglot)
-;; langs (python, js/jsx, web (html/css/jsx), java, etc)
-;; iedit, apheleia
-;; use-package imenu
+;; bindings
+;; which-key vs embark help thing
+;; yes/no vs y/n

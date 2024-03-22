@@ -1,12 +1,15 @@
-;;; lang/base.el -*- lexical-binding: t -*-
+;;; 05-lang.el -*- lexical-binding: t -*-
 ;;
-;; Useful settings/packages for general programming modes
-;; e.g. version control, LSP, Treesitter
+;; All programming specific setup
+;; e.g. LSP, tree-sitter, lang specific modes, terminals
 
 ;; Version Control
 (use-package magit)
 
-;; Programming mode visuals
+(use-package forge
+  :after magit)
+
+;; Programming mode visuals/convenience
 (use-package display-line-numbers
   :ensure nil
   :hook prog-mode
@@ -14,7 +17,9 @@
   (display-line-numbers-width 2)
   (display-line-numbers-widen t))
 
-;; Matching parens
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
 (use-package electric-pair
   :ensure nil
   :hook prog-mode)
@@ -28,8 +33,11 @@
   ;; LSP Enabled Langs
   :hook
   ((python-ts-mode . eglot-ensure)
+   (java-ts-mode . eglot-ensure)
+   ;; Web modes
    (js-ts-mode . eglot-ensure)
-   (java-ts-mode . eglot-ensure)))
+   (typescript-ts-mode . eglot-ensure)
+   (tsx-ts-mode . eglot-ensure)))
 
 ;; Tree-sitter helper
 ;; Automatically installs and uses a ts major mode when available
@@ -42,6 +50,15 @@
   (global-treesit-auto-mode))
 
 
+;; Manual TreeSitter mode activations
+(use-package typescript-ts-mode
+  :ensure nil
+  :mode "\\.ts$")
+
+(use-package tsx-ts-mode
+  :ensure nil
+  :mode "\\.tsx$")
+
 ;; Expand Region with treesitter
 ;; TODO, but already in navigation.el
 
@@ -52,7 +69,13 @@
   ;; TODO configure more, e.g. using isort, ruff etc.
   )
 
-;; export module
-(provide 'lang/base)
+;; EAT: pure elisp terminal
+(use-package eat
+  :hook ((eshell-load . eat-eshell-mode)
+         (eshell-load . eat-eshell-visual-command-mode)))
 
-;;; end of lang/base.el
+
+;; export module
+(provide '05-lang)
+
+;;; end of 05-lang.el
