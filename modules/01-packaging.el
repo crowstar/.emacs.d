@@ -5,6 +5,10 @@
 ;; fow now, we will use elpaca
 ;;
 
+;; Allows navigation through imenu
+;; Must be set before use-package is loaded
+(setq-default use-package-enable-imenu-support t)
+
 ;;
 ;; installer copied from elpaca github
 ;;
@@ -60,9 +64,6 @@
   ;; Assume :elpaca t unless otherwise specified.
   (setopt use-package-always-ensure t))
 
-;; Allows navigation through imenu
-;; Must be set before use-package is loaded
-(setq-default use-package-enable-imenu-support t)
 
 ;; Block until current queue processed.
 (elpaca-wait)
