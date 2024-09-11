@@ -356,13 +356,14 @@
   :defer t)
 
 (use-package lsp-pyright
-  :ensure t
+  :defer t
   :hook
   (python-ts-mode . (lambda () (require 'lsp-pyright))))
 
 ;; Tree-sitter helper
 ;; Automatically installs and uses a ts major mode when available
 (use-package treesit-auto
+  :demand t
   :custom
   (treesit-auto-install 'prompt)
   :config
@@ -425,6 +426,3 @@
 
 ;;; TODO:
 ;; sort out # files
-;; lsp-mode (web/ts/tsx etc modes probably exist to be installed, need to configure company to be ignored)
-;; pin go treesitter version (all versions? Use combobulate example)
-;; refactor init.el to one file (outline)
